@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Company extends Model
 {
@@ -15,4 +16,14 @@ class Company extends Model
         'legal_name',
         'all_available_names',
     ];
+
+    public function phoneNumbers(): HasMany
+    {
+        return $this->hasMany(PhoneNumber::class);
+    }
+
+    public function socialMediaLinks(): HasMany
+    {
+        return $this->hasMany(SocialMediaLink::class);
+    }
 }
