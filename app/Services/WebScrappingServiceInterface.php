@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use Symfony\Component\DomCrawler\Crawler;
+use Illuminate\Support\LazyCollection;
 
 interface WebScrappingServiceInterface
 {
-    public function getScrapingResult(Crawler $crawler): array;
+    public function processWebsites(LazyCollection $batch): void;
 }

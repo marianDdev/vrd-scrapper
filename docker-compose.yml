@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
     app:
         build:
@@ -56,6 +57,23 @@ services:
         restart: unless-stopped
         ports:
             - "6379:6379"
+        networks:
+            - vrd_scrapper
+
+    worker:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: laravel_worker
+        depends_on:
+            - redis
+            - mysql
+        volumes:
+            - ./:/var/www
+        env_file:
+            - .env
+        command: php /var/www/artisan queue:work redis --sleep=3 --tries=3 --timeout=600
+        restart: unless-stopped
         networks:
             - vrd_scrapper
 

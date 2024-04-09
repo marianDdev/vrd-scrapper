@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('commercial_name');
             $table->string('legal_name')->nullable();
             $table->string('all_available_names');
+            $table->text('address')->nullable();
             $table->timestamps();
         });
     }

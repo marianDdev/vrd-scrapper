@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id');
             $table->string('platform');
-            $table->string('url');
+            $table->text('url');
             $table->timestamps();
         });
     }
