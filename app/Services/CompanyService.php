@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\InsertCompaniesJob;
+use App\Models\Company;
 use Illuminate\Support\Facades\Bus;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
@@ -25,5 +26,14 @@ class CompanyService implements CompanyServiceInterface
         foreach ($chunks as $chunk) {
             $batch->add(new InsertCompaniesJob($chunk));
         }
+    }
+
+    public function updateAddresses(Company $company, array $addresses = []): void
+    {
+        if (count($addresses) === 0) {
+            return;
+        }
+
+        $company->update(['address' => implode(",", $addresses)]);
     }
 }

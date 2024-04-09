@@ -15,7 +15,7 @@ class ScrapeWebsitesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:scrape-websites-command';
+    protected $signature = 'app:scrape-websites';
 
     /**
      * The console command description.
@@ -24,6 +24,8 @@ class ScrapeWebsitesCommand extends Command
      */
     protected $description = 'Scrape websites';
 
+    private const WEBSITES_PATH = 'app/public/sample-websites.csv';
+
     /**
      * Execute the console command.
      *
@@ -31,19 +33,15 @@ class ScrapeWebsitesCommand extends Command
      */
     public function handle(): void
     {
-        $path = storage_path('app/public/sample-websites.csv');
+        $path = storage_path(self::WEBSITES_PATH);
 
-        $chunks = SimpleExcelReader::create($path)
-                                   ->getRows()
-                                   ->chunk(10);
+        $batches = SimpleExcelReader::create($path)->getRows()->chunk(5);
 
-        $jobs = $chunks->map(function ($chunk) {
-            return new ScrapeWebsitesJob($chunk);
+        $jobs = $batches->map(function ($batch) {
+            return new ScrapeWebsitesJob($batch);
         })->all();
 
-        Bus::batch($jobs)
-           ->name('scrape websites')
-           ->dispatch();
+        Bus::batch($jobs)->name('scrape websites')->dispatch();
 
         $this->info('Jobs have been dispatched for scraping in chunks.');
     }

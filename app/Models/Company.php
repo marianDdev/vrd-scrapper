@@ -15,6 +15,7 @@ class Company extends Model
         'commercial_name',
         'legal_name',
         'all_available_names',
+        'address',
     ];
 
     public function phoneNumbers(): HasMany
