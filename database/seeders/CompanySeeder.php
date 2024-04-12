@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Services\CompanyServiceInterface;
+use App\Services\Company\CompanyServiceInterface;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
 

@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class SocialMediaLink extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $fillable = [
         'company_id',
@@ -16,8 +17,13 @@ class SocialMediaLink extends Model
         'url'
     ];
 
-    public function company(): BelongsTo
+    public function toSearchableArray(): array
     {
-        return $this->belongsTo(Company::class);
+        return $this->toArray();
     }
+
+//    public function company(): BelongsTo
+//    {
+//        return $this->belongsTo(Company::class);
+//    }
 }

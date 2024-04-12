@@ -5,15 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class PhoneNumber extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $fillable = ['company_id','phone'];
 
-    public function company(): BelongsTo
+    public function toSearchableArray(): array
     {
-        return $this->belongsTo(Company::class);
+        return $this->toArray();
     }
+
+//    public function company(): BelongsTo
+//    {
+//        return $this->belongsTo(Company::class);
+//    }
 }

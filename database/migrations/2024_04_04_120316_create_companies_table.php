@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('commercial_name');
             $table->string('legal_name')->nullable();
             $table->string('all_available_names');
+            $table->json('phone_numbers')->nullable();
+            $table->json('social_media_links')->nullable();
             $table->text('address')->nullable();
             $table->timestamps();
         });
