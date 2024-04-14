@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Company;
 
+use App\Dto\ScrapingResultDto;
 use App\Jobs\InsertCompaniesJob;
 use App\Models\Company;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
 
@@ -28,12 +30,20 @@ class CompanyService implements CompanyServiceInterface
         }
     }
 
-    public function updateAddresses(Company $company, array $addresses = []): void
+    public function update(ScrapingResultDto $dto, string $domain): void
     {
-        if (count($addresses) === 0) {
-            return;
-        }
+        try {
+            $company = Company::where('domain', $domain)->first();
+            $company->update(
+                [
+                    'phone_numbers'      => $dto->phoneNumbers,
+                    'social_media_links' => $dto->socialLinks,
+                    'address'            => implode(",", $dto->addresses),
+                ]
+            );
 
-        $company->update(['address' => implode(",", $addresses)]);
+        } catch (Throwable $e) {
+            Log::error(sprintf("Error processing website %s", $domain), ['exception' => $e->getMessage()]);
+        }
     }
 }

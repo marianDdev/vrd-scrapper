@@ -35,14 +35,16 @@ class ScrapeWebsitesCommand extends Command
     {
         $path = storage_path(self::WEBSITES_PATH);
 
-        $batches = SimpleExcelReader::create($path)->getRows()->chunk(5);
-
-        $jobs = $batches->map(function ($batch) {
-            return new ScrapeWebsitesJob($batch);
-        })->all();
+        $jobs = SimpleExcelReader::create($path)
+                                 ->getRows()
+                                 ->chunk(100)
+                                 ->collapse()
+                                 ->map(function ($website) {
+                                     return new ScrapeWebsitesJob($website);
+                                 });
 
         Bus::batch($jobs)->name('scrape websites')->dispatch();
 
-        $this->info('Jobs have been dispatched for scraping in chunks.');
+        $this->info('Scraping process started.');
     }
 }

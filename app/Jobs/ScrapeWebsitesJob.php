@@ -2,14 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Services\WebScrappingServiceInterface;
+use App\Services\WebScraper\WebScraperServiceInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\LazyCollection;
 
 class ScrapeWebsitesJob implements ShouldQueue
 {
@@ -18,15 +17,15 @@ class ScrapeWebsitesJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(private readonly LazyCollection $batch)
+    public function __construct(private readonly array $website)
     {
     }
 
     /**
      * Execute the job.
      */
-    public function handle(WebScrappingServiceInterface $webScrappingService): void
+    public function handle(WebScraperServiceInterface $webScrappingService): void
     {
-        $webScrappingService->processWebsites($this->batch);
+        $webScrappingService->processWebsite($this->website);
     }
 }
