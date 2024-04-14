@@ -10,7 +10,7 @@ class AddressService implements AddressServiceInterface
     {
         $addresses = [];
 
-        $crawler->filter('h1, h2, h3, h4, h5, h6')->each(function (Crawler $node) use (&$addresses) {
+        $crawler->filter('h1, h2, h3, h4, h5, h6, p')->each(function (Crawler $node) use (&$addresses) {
             $headingText = strtolower($node->text());
             if (str_contains($headingText, 'address')) {
                 $nextElements = $node->nextAll();

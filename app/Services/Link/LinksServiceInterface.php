@@ -7,6 +7,7 @@ use Symfony\Component\DomCrawler\Crawler;
 interface LinksServiceInterface
 {
     const PLATFORMS = [
+        'facebook',
         'twitter',
         'instagram',
         'linkedin',

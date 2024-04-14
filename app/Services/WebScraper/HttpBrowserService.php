@@ -4,8 +4,8 @@ namespace App\Services\WebScraper;
 
 use App\Dto\ScrapingResultDto;
 use App\Events\WebsiteProcessed;
+use App\Factories\HttpBrowserFactory;
 use App\Services\Address\AddressServiceInterface;
-use App\Services\Company\CompanyServiceInterface;
 use App\Services\Link\LinksServiceInterface;
 use App\Services\PhoneNumber\PhoneNumberServiceInterface;
 use Exception;
@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 readonly class HttpBrowserService implements WebScraperServiceInterface
@@ -32,32 +31,17 @@ readonly class HttpBrowserService implements WebScraperServiceInterface
      */
     public function processWebsite(array $website): void
     {
-        $browser = $this->buildHttpBrowser();
+        Log::info(sprintf("Starting processing website: %s", $website['domain']));
+        $result = $this->getScrapingResult(HttpBrowserFactory::createHttpBrowser(), $website['domain']);
 
-        Log::info("Starting processing website: " . $website['domain']);
-        $crawler = $this->getCrawler($browser, $website['domain']);
-
-        if (!$crawler) {
+        if (!$result) {
             return;
         }
 
-        event(new WebsiteProcessed($this->getScrapingResult($crawler), $website['domain']));
+        event(new WebsiteProcessed($this->getResultDto($result), $website['domain']));
     }
 
-    private function buildHttpBrowser(): HttpBrowser
-    {
-        return new HttpBrowser(HttpClient::create(
-            [
-                'verify_peer'  => self::VERIFY_PEER,
-                'verify_host'  => self::VERIFY_HOST,
-                'timeout'      => self::TIMEOUT,
-                'max_duration' => self::MAX_DURATION,
-            ]
-        )
-        );
-    }
-
-    private function getCrawler(HttpBrowser $browser, string $domain): ?Crawler
+    private function getScrapingResult(HttpBrowser $browser, string $domain): ?Crawler
     {
         try {
             return $browser->request('GET', sprintf('https://%s', $domain));
@@ -80,7 +64,7 @@ readonly class HttpBrowserService implements WebScraperServiceInterface
     /**
      * @throws Exception
      */
-    private function getScrapingResult(Crawler $crawler): ScrapingResultDto
+    private function getResultDto(Crawler $crawler): ScrapingResultDto
     {
         try {
             $phoneNumbers = $this->phoneNumberService->getPhoneNumbers($crawler);

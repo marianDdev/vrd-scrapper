@@ -69,8 +69,8 @@ return [
     */
 
     'chunk' => [
-        'searchable' => 500,
-        'unsearchable' => 500,
+        'searchable' => 1000,
+        'unsearchable' => 1000,
     ],
 
     /*
@@ -117,18 +117,18 @@ return [
         'secret' => env('ALGOLIA_SECRET', ''),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Meilisearch Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure your Meilisearch settings. Meilisearch is an open
-    | source search engine with minimal configuration. Below, you can state
-    | the host and key information for your own Meilisearch installation.
-    |
-    | See: https://www.meilisearch.com/docs/learn/configuration/instance_options#all-instance-options
-    |
-    */
+/*
+|--------------------------------------------------------------------------
+| Meilisearch Configuration
+|--------------------------------------------------------------------------
+|
+| Here you may configure your Meilisearch settings. Meilisearch is an open
+| source search engine with minimal configuration. Below, you can state
+| the host and key information for your own Meilisearch installation.
+|
+| See: https://www.meilisearch.com/docs/learn/configuration/instance_options#all-instance-options
+|
+*/
 
     'meilisearch' => [
         'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),

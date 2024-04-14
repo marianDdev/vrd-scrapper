@@ -36,9 +36,10 @@ class Company extends Model
 
     public function toSearchableArray(): array
     {
-        return array_merge($this->toArray(), [
-            'phone_numbers' => $this->phone_numbers,
-            'social_media_links' => $this->social_media_links
-        ]);
+        $array = $this->toArray();
+        $array['phone_numbers'] = $this->phone_numbers;
+        $array['social_media_links'] = $this->social_media_links;
+
+        return $array;
     }
 }

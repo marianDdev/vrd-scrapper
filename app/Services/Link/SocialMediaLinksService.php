@@ -22,11 +22,14 @@ readonly class SocialMediaLinksService implements LinksServiceInterface
             $domain = $this->extractDomain($href);
 
             if (in_array($domain, self::PLATFORMS)) {
-                return [$domain => $href];
+                return [
+                    'platform' => $domain,
+                    'url' => $href
+                ];
             }
         });
 
-        return array_merge(...array_values(array_filter($socialLinks)));
+        return array_values(array_filter($socialLinks));
     }
 
     private function extractDomain(string $href): string

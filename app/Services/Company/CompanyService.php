@@ -33,12 +33,12 @@ class CompanyService implements CompanyServiceInterface
     public function update(ScrapingResultDto $dto, string $domain): void
     {
         try {
-            $company   = Company::where('domain', $domain)->first();
+            $company = Company::where('domain', $domain)->first();
             $company->update(
                 [
-                    'phone_numbers' => $dto->phoneNumbers,
+                    'phone_numbers'      => $dto->phoneNumbers,
                     'social_media_links' => $dto->socialLinks,
-                    'address' => implode(",", $dto->addresses)
+                    'address'            => implode(",", $dto->addresses),
                 ]
             );
 

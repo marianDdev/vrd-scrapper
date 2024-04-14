@@ -2,26 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Company;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\SearchRequest;
+use App\Http\Resources\SearchResultResource;
+use App\Services\Search\SearchServiceInterface;
 
 class SearchController extends Controller
 {
-    public function search(Request $request): JsonResponse
+    public function index(SearchRequest $request, SearchServiceInterface $service): SearchResultResource
     {
-        $searchQuery = $request->get('query', ''); // Get the search query input
-
-        $companies = Company::search($searchQuery, function($algolia, $query, $options) use ($request) {
-            if ($request->has('phone')) {
-                $options['facetFilters'] = ["phone_numbers:{$request->phone}"];
-            }
-            if ($request->has('facebook')) {
-                $options['facetFilters'][] = ["social_media_links.url:{$request->facebook}"];
-            }
-            return $algolia->search($query, $options);
-        })->paginate(10);
-
-        return response()->json($companies);
+        return new SearchResultResource($service->search($request->validated()));
     }
 }

@@ -12,6 +12,10 @@ use App\Services\Link\LinksServiceInterface;
 use App\Services\Link\SocialMediaLinksService;
 use App\Services\PhoneNumber\PhoneNumberService;
 use App\Services\PhoneNumber\PhoneNumberServiceInterface;
+use App\Services\Search\SearchService;
+use App\Services\Search\SearchServiceInterface;
+use App\Services\Statistics\StatisticsService;
+use App\Services\Statistics\StatisticsServiceInterface;
 use App\Services\WebScraper\HttpBrowserService;
 use App\Services\WebScraper\WebScraperServiceInterface;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(LinksServiceInterface::class, SocialMediaLinksService::class);
         $this->app->singleton(AddressServiceInterface::class, AddressService::class);
         $this->app->singleton(FileServiceInterface::class, CsvService::class);
+        $this->app->singleton(StatisticsServiceInterface::class, StatisticsService::class);
+        $this->app->singleton(SearchServiceInterface::class, SearchService::class);
     }
 
     /**
