@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\StatisticsResource;
 use App\Services\Statistics\StatisticsServiceInterface;
+use Illuminate\Http\JsonResponse;
 
 class StatisticsController extends Controller
 {
-    public function index(StatisticsServiceInterface $service): StatisticsResource
+    public function index(StatisticsServiceInterface $service): JsonResponse
     {
-        return new StatisticsResource($service->getStatistics());
+        return new JsonResponse($service->getStatistics());
     }
 }

@@ -64,12 +64,13 @@ readonly class HttpBrowserService implements WebScraperServiceInterface
     /**
      * @throws Exception
      */
-    private function getResultDto(Crawler $crawler): ScrapingResultDto
+    private function getResultDto(Crawler $result): ScrapingResultDto
     {
         try {
-            $phoneNumbers = $this->phoneNumberService->getPhoneNumbers($crawler);
-            $socialLinks  = $this->socialLinksService->getSocialMediaLinks($crawler);
-            $addresses    = $this->addressService->getAddresses($crawler);
+            $body = $result->filter('body');
+            $phoneNumbers = $this->phoneNumberService->getPhoneNumbers($body);
+            $socialLinks  = $this->socialLinksService->getSocialMediaLinks($body);
+            $addresses    = $this->addressService->getAddresses($body);
         } catch (Exception $e) {
             $this->logger->error(sprintf('Error during scraping: %s', $e->getMessage()));
 

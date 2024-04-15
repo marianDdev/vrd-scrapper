@@ -22,19 +22,18 @@ class SearchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable', 'string', 'min:2'],
-            //'website' => ['nullable', 'regex:/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/'],
-            'website' => ['nullable'],
-            //'phone_number' => ['nullable', 'string', 'regex:/\+?(\d{1,3})[ .-]?(\(\d{2,3}\)|\d{2,3})[ .-]?(\d{3})[ .-]?(\d{4})/'],
+            'name'         => ['nullable', 'string', 'min:2'],
+            //'website'      => ['nullable', 'regex:/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/'],
+            'website'      => ['nullable'],
             'phone_number' => ['nullable', 'string'],
-            'facebook' => ['nullable', 'string']
+            'facebook'     => ['nullable', 'string'],
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
-            'website.regex' => "The website field format is invalid. Use this format instead: 'example.com'"
+            'website.regex' => "The website field format is invalid. Use this format instead: 'example.com', without any prefix.",
         ];
     }
 }

@@ -9,6 +9,7 @@ use Laravel\Scout\Searchable;
 /**
  * @property array $phone_numbers
  * @property array $social_media_links
+ * @property string $address
  */
 class Company extends Model
 {

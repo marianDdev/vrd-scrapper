@@ -6,11 +6,11 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class AddressService implements AddressServiceInterface
 {
-    public function getAddresses(Crawler $crawler): array
+    public function getAddresses(Crawler $body): array
     {
         $addresses = [];
 
-        $crawler->filter('h1, h2, h3, h4, h5, h6, p')->each(function (Crawler $node) use (&$addresses) {
+        $body->filter('h1, h2, h3, h4, h5, h6, p')->each(function (Crawler $node) use (&$addresses) {
             $headingText = strtolower($node->text());
             if (str_contains($headingText, 'address')) {
                 $nextElements = $node->nextAll();
@@ -25,5 +25,12 @@ class AddressService implements AddressServiceInterface
 
 
         return array_unique($addresses);
+    }
+
+    private function isAddress(string $headingText): bool
+    {
+        return collect(self::ADDRESS_KEYWORDS)->contains(function ($keyword) use ($headingText) {
+            return str_contains($headingText, $keyword);
+        });
     }
 }

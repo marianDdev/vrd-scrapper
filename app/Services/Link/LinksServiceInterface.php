@@ -26,5 +26,5 @@ interface LinksServiceInterface
         'discord',
     ];
 
-    public function getSocialMediaLinks(Crawler $crawler): array;
+    public function getSocialMediaLinks(Crawler $body): array;
 }

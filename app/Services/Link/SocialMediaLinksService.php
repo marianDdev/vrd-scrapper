@@ -6,31 +6,32 @@ use Symfony\Component\DomCrawler\Crawler;
 
 readonly class SocialMediaLinksService implements LinksServiceInterface
 {
-    public function getSocialMediaLinks(Crawler $crawler): array
+    public function getSocialMediaLinks(Crawler $body): array
     {
-        $links = $crawler->filter('a');
+        $links = $body->filter('a');
         if ($links->count() === 0) {
             return [];
         }
 
-        $socialLinks = $links->each(function ($node) {
-            $href   = $node->attr('href');
+        $socialLinks = [];
+        $links->each(function ($node) use (&$socialLinks) {
+            $href = $node->attr('href');
             if (!$href) {
-                return [];
+                return;
             }
 
             $domain = $this->extractDomain($href);
-
             if (in_array($domain, self::PLATFORMS)) {
-                return [
+                $socialLinks[$domain] = [
                     'platform' => $domain,
-                    'url' => $href
+                    'url'      => $href,
                 ];
             }
         });
 
-        return array_values(array_filter($socialLinks));
+        return array_values($socialLinks);
     }
+
 
     private function extractDomain(string $href): string
     {
