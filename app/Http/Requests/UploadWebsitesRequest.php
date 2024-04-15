@@ -14,15 +14,15 @@ class UploadWebsitesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|mimes:csv,txt'
+            'file' => 'required|file|mimes:csv,txt',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'file.mimetypes' => 'The file must be a CSV file.',
-            'file.mimes' => 'The file extension must be .csv',
+            'file.mimes'     => 'The file extension must be .csv',
         ];
     }
 }

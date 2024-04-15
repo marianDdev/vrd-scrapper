@@ -6,11 +6,9 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class PhoneNumberService implements PhoneNumberServiceInterface
 {
-    public function getPhoneNumbers(Crawler $crawler): array
+    public function getPhoneNumbers(Crawler $body): array
     {
         $phoneNumbers = [];
-        $body = $crawler->filter('body');
-
         if ($body->count() > 0) {
             $content = $body->text();
 

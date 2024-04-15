@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchRequest;
-use App\Http\Resources\SearchResultResource;
 use App\Services\Search\SearchServiceInterface;
+use Illuminate\Http\JsonResponse;
 
 class SearchController extends Controller
 {
-    public function index(SearchRequest $request, SearchServiceInterface $service): SearchResultResource
+    public function index(SearchRequest $request, SearchServiceInterface $service): JsonResponse
     {
-        return new SearchResultResource($service->search($request->validated()));
+        return new JsonResponse($service->search($request->validated()));
     }
 }

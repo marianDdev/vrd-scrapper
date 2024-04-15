@@ -23,7 +23,10 @@ class SearchService implements SearchServiceInterface
         }
 
         if (isset($params['website'])) {
-            $facetFilters[] = 'domain:' . $params['website'];
+            $website = $this->cleanUrl($params['website']);
+            if ($this->cleanUrl($params['website'])) {
+                $facetFilters[] = 'domain:' . $website;
+            }
         }
 
         if (isset($params['facebook']) && $params['facebook'] !== $keyword) {
@@ -33,5 +36,14 @@ class SearchService implements SearchServiceInterface
         $filterString = implode(' AND ', $filters);
 
         return $builder->with(['filters' => $filterString, 'facetFilters' => $facetFilters])->get();
+    }
+
+    private function cleanUrl($url): ?string
+    {
+        if (preg_match(self::URL_PATTERN, $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
     }
 }

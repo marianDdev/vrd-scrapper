@@ -7,6 +7,7 @@ use App\Jobs\ScrapeWebsitesJob;
 use App\Services\File\FileServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class WebScrapingController extends Controller
@@ -30,11 +31,13 @@ class WebScrapingController extends Controller
                 }
             });
 
+            Storage::delete($file->path());
+
             Bus::batch($jobs)->name('scrape websites')->dispatch();
 
             return new JsonResponse(['message' => 'Scraping process started, jobs dispatched.']);
         } catch (\Exception $e) {
-            return response()->json(
+            return new JsonResponse(
                 [
                     'message' => sprintf(
                         'Something went wrong: %s. Trace: %s',

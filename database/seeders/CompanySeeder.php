@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Services\Company\CompanyServiceInterface;
+use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
 
@@ -22,8 +23,8 @@ class CompanySeeder extends Seeder
         try {
             $path = database_path(self::CSV_PATH);
             $this->companyService->createFromCsv($path);
-        } catch (\Exception $e) {
-            $this->command->error("An error occurred: " . $e->getMessage());
+        } catch (Exception $e) {
+            $this->command->error(sprintf("An error occurred: %s", $e->getMessage()));
             Log::error('Error importing companies from CSV.', ['exception' => $e->getMessage()]);
         }
 
