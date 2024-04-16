@@ -11,8 +11,8 @@ class AddressService implements AddressServiceInterface
         $addresses = [];
 
         $body->filter('h1, h2, h3, h4, h5, h6, p')->each(function (Crawler $node) use (&$addresses) {
-            $headingText = strtolower($node->text());
-            if (str_contains($headingText, 'address')) {
+            $text = strtolower($node->text());
+            if ($this->isAddress($text)) {
                 $nextElements = $node->nextAll();
                 if ($nextElements->count() > 0) {
                     $nextElementText = $nextElements->text();
@@ -27,10 +27,10 @@ class AddressService implements AddressServiceInterface
         return array_unique($addresses);
     }
 
-    private function isAddress(string $headingText): bool
+    private function isAddress(string $text): bool
     {
-        return collect(self::ADDRESS_KEYWORDS)->contains(function ($keyword) use ($headingText) {
-            return str_contains($headingText, $keyword);
+        return collect(self::ADDRESS_KEYWORDS)->contains(function ($keyword) use ($text) {
+            return str_contains($text, $keyword);
         });
     }
 }

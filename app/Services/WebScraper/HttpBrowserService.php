@@ -32,7 +32,7 @@ readonly class HttpBrowserService implements WebScraperServiceInterface
     public function processWebsite(array $website): void
     {
         Log::info(sprintf("Starting processing website: %s", $website['domain']));
-        $result = $this->getScrapingResult(HttpBrowserFactory::createHttpBrowser(), $website['domain']);
+        $result = $this->getScrapingResult($website['domain']);
 
         if (!$result) {
             return;
@@ -41,8 +41,9 @@ readonly class HttpBrowserService implements WebScraperServiceInterface
         event(new WebsiteProcessed($this->getResultDto($result), $website['domain']));
     }
 
-    private function getScrapingResult(HttpBrowser $browser, string $domain): ?Crawler
+    private function getScrapingResult(string $domain): ?Crawler
     {
+        $browser = HttpBrowserFactory::createHttpBrowser();
         try {
             return $browser->request('GET', sprintf('https://%s', $domain));
         } catch (TransportExceptionInterface $e) {

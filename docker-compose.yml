@@ -48,7 +48,7 @@ services:
             MYSQL_PASSWORD: password
             MYSQL_ROOT_PASSWORD: password
         volumes:
-            - dbdata:/var/lib/mysql
+            - vrd-scrapper_dbdata:/var/lib/mysql
             - ./init.sql:/docker-entrypoint-initdb.d/init-db.sql
         networks:
             - vrd_scrapper
@@ -90,4 +90,4 @@ networks:
 
 volumes:
     esdata:
-    dbdata:
+    vrd-scrapper_dbdata:
