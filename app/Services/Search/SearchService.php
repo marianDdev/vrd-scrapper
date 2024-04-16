@@ -3,22 +3,31 @@
 namespace App\Services\Search;
 
 use App\Models\Company;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class SearchService implements SearchServiceInterface
 {
-    public function search(array $params): Collection
+    public function search(array $params): Collection|LengthAwarePaginator
     {
-        $keyword      = collect($params)->first();
+        if (!isset($params['keyword'])) {
+            return Company::paginate(50);
+        }
+
+        $keyword      = $params['keyword'];
+
+
+
+
         $builder      = Company::search($keyword);
         $facetFilters = [];
         $filters      = [];
 
-        if (isset($params['name']) && $params['name'] !== $keyword) {
+        if (isset($params['name'])) {
             $filters[] = 'name:' . $params['name'];
         }
 
-        if (isset($params['phone_number']) && $params['phone_number'] !== $keyword) {
+        if (isset($params['phone_number'])) {
             $facetFilters[] = 'phone_numbers:' . preg_replace('/[^\d\+]/', '', $params['phone_number']);
         }
 
@@ -29,7 +38,7 @@ class SearchService implements SearchServiceInterface
             }
         }
 
-        if (isset($params['facebook']) && $params['facebook'] !== $keyword) {
+        if (isset($params['facebook'])) {
             $facetFilters[] = 'social_media_links.url:' . $params['facebook'];
         }
 
