@@ -16,13 +16,12 @@ class AddressService implements AddressServiceInterface
                 $nextElements = $node->nextAll();
                 if ($nextElements->count() > 0) {
                     $nextElementText = $nextElements->text();
-                    if ($nextElementText && preg_match('/\d{2,}.*\d{5,}/', $nextElementText)) {
+                    if ($nextElementText && preg_match('/\d{1,5}\s\w+\s(\w+\s?){1,3},\s[A-Z]{2}\s\d{5}/', $nextElementText)) {
                         $addresses[] = trim($nextElementText);
                     }
                 }
             }
         });
-
 
         return array_unique($addresses);
     }

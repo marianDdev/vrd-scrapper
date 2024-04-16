@@ -22,8 +22,8 @@ class SearchRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'keyword'      => ['nullable'],
             'name'         => ['nullable', 'string', 'min:2'],
-            //'website'      => ['nullable', 'regex:/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/'],
             'website'      => ['nullable'],
             'phone_number' => ['nullable', 'string'],
             'facebook'     => ['nullable', 'string'],

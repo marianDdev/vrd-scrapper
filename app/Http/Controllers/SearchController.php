@@ -10,6 +10,19 @@ class SearchController extends Controller
 {
     public function index(SearchRequest $request, SearchServiceInterface $service): JsonResponse
     {
-        return new JsonResponse($service->search($request->validated()));
+        $validated = $request->validated();
+        $result    = $service->search($validated);
+
+        if (!count($result)) {
+            return new JsonResponse(
+                sprintf(
+                    'No results found for %s keyword',
+                    $validated['keyword']
+                ),
+                404
+            );
+        }
+
+        return new JsonResponse($service->search($validated));
     }
 }
