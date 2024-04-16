@@ -1,66 +1,43 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Veridion Scraper
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Rest-API implementation for Veridion's scraping system.
 
-## About Laravel
+Developed with Laravel 11, PHP 8.2, Mysql 8, Redis and Algolia.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Approach:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The application is containerized using Docker and docker-compose for facilitating scalable configurations.   
+Among the configured services, there are Redis for caching and for queue connection and Worker with 10 replicas that will help me better distribute the load, execute parallel processing and have shorter pending time for jobs to be processed on each queue.
+Each replica has allocated 100mb memory so that in total, the processing will not take more tha 1Gb RAM memory.
+I am using Mysql for storing data, I created a table called **companies** and a seeder based on the **sample-websites-company-names.csv** file.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+I am using Algolia as search engine because and for this I have installed a package called Laravel Scout Extended specifically made by Algolia team for Laravel projects.
 
-## Learning Laravel
+I have created an API that takes **sample-websites.csv** file as input, parses the file, and then for each domain I dispatch a separate job. 
+Once each job finishes the processing and extracts the data points, I dispatch en event that lets a certain listener know that the processing is finished.
+The listener then calls a service that based on the domain name updates the right record from the companies table with the extracted data. 
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+The main design patterns used by me are dependency injection, factory and observer.
+I tried to follow best practices and SOLID principle by keeping all the logic and computations in services which implement interfaces. I have only injected interfaces so that none of the objects will depend on concrete classes.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Run `git clone https://github.com/marianDdev/vrd-scrapper.git` for cloning the project locally 
+- Run `cp .env.example .env` and replace dummy values with your own 
+- Run `docker-compose up -d --build` to create and start all the containers
+  - Beside app, nginx and mysql services, in the dcoker-compose.yml file are also configured:
+    - REDIS service, used for caching and as queue connection
+    - Worker service which creates 10 replicas, each replica having a queue for stocking pending jobs  
+- Run `docker exec -it vrd_scrapper sh` (or bash) to enter into the app container
+- Run `php artisan key:generate`
+- Run `php artisan migrate && php artisan db:seed` to create companies table and seed it with the data provided in the **sample-websites-company-names.csv** file 
+- Follow the POSTMAN documentation for the next steps:
+  - [Click here to view the API documentation](https://documenter.getpostman.com/view/13777591/2sA3BkcD1R)
+  - Execute a POST request to the scraping API (`/scrape`) with **sample-websites.csv** file as input
+    - This action will start the batch jobs processing. Watch the **job_batches** table and wait about 3 -4 minutes for the 997 domains to be processed.
+    - In this step each record from the companies table should be already updated with the extracted data points.
+- Register on Algolia and create an index called companies_index.
+  - Run `php artisan scout:sync` and choose to update the Algolia dashboard with your local settings, thanks to the local config file **config/scout-companies-index.php**. 
+  - Run `php artisan scout:import` - this step will import in Algolia all the records from the mysql database. 
+- For testing the search feature, execute a GET request to the search API (`/companies`)
+  - make the request with a parameter called `keyword`
+  - filter your search with the available filter attributes: `name`, `website`, `facebook` or `phone_number`
+- Execute a GET request to the statistics API (`/statistics`)
